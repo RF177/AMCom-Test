@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"	
+	xmlns:p="http://primefaces.org/ui">
+	
+<h:head>
+	<title><ui:insert name="title">Item - Teste AMcom</ui:insert></title>	
+</h:head>
+<h:body>
+	<ui:include src="header.xhtml" />	
+	<ui:include src="menu.xhtml" />
+	
+	<div id="layout-portlets-cover" class="fontRegular" >			
+		<h:form id="form_data_item" >				
+			
+			<p:growl id="messages_item" autoUpdate="false" showDetail="true" />
+			
+			<div id="menu" class="clean-menu" >		
+				<h:panelGroup rendered="#{itemBean.selectedItem == null}" >			
+					<p:commandButton value="Novo" id="btn_novo" process="@this" actionListener="#{itemBean.novo}" update="form_data_item" styleClass="btn_menu" ><p:resetInput target="form_data_item" /></p:commandButton>									
+				</h:panelGroup>
+				
+				<h:panelGroup rendered="#{itemBean.selectedItem != null}" >
+					<p:commandButton value="Salvar" id="btn_salvar" type="submit" actionListener="#{itemBean.salvar}" update="form_data_item" styleClass="btn_menu" />
+					<p:commandButton value="Excluir" id="btn_excluir" disabled="#{itemBean.selectedItem.oid == null}" actionListener="#{itemBean.excluir}" update="form_data_item" styleClass="btn_menu" />										
+				</h:panelGroup>											
+			</div>
+			
+			<p:panel rendered="#{itemBean.selectedItem != null}" styleClass="altura" >					
+				<div class="row" >
+			    	<div class="two columns">
+						<p:outputLabel value="OID" for="oid" />
+		    			<p:inputText id="oid" disabled="true" value="#{itemBean.selectedItem.oid}" styleClass="u-full-width" />
+		    		</div>
+		    	</div>		
+			   
+			   <div class="row" >			    	
+			    	<p:outputLabel value="Descrição" for="descricao" />
+			    	<p:inputText id="descricao" value="#{itemBean.selectedItem.descricao}" maxlength="255" autocomplete="off" required="true" requiredMessage="Descrição do item não foi informada!" styleClass="u-full-width" />
+			    </div>	
+			    	
+			    <div class="row" >
+			    	<div class="two columns">		        		
+	        			<p:outputLabel value="Valor" for="valor" />
+						<p:inputNumber id="valor" value="#{itemBean.selectedItem.valor}" decimalSeparator="," thousandSeparator="." required="true" requiredMessage="Valor não informado!" styleClass="u-full-width" />
+					</div>
+				</div>	        	      		        
+	        </p:panel>	
+		</h:form>
+		
+		<h:form id="form_table_item" >
+			<p:dataTable var="item" 
+					emptyMessage="Nenhum item encontrado..."
+					scrollable="true"
+			 		value="#{itemBean.items}"
+					rowKey="#{item.oid}" 
+					selection="#{itemBean.selectedItem}"
+					selectionMode="single" 
+			 		rendered="#{itemBean.selectedItem == null}"
+			 		scrollHeight="100%" 
+					styleClass="altura" >
+			 	
+				<p:ajax event="rowSelect" listener="#{itemBean.onRowSelect}" />
+			 		
+			    <p:column headerText="OID" width="10%" sortBy="#{item.oid}" ><h:outputText value="#{item.oid}" /></p:column>	
+			    <p:column headerText="Descrição" width="75%" sortBy="#{item.descricao}" ><h:outputText value="#{item.descricao}" /></p:column>
+			    <p:column headerText="Valor" width="15%" sortBy="#{item.valor}" ><h:outputText value="#{item.valor}" ><f:convertNumber minFractionDigits="2" maxIntegerDigits="12" locale="pt_BR" /></h:outputText></p:column>			 				    
+			</p:dataTable>
+		</h:form>
+	</div>
+
+</h:body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"	
+	xmlns:p="http://primefaces.org/ui">
+	
+<h:head>
+	<title><ui:insert name="title">Lançamento - Teste AMcom</ui:insert></title>	
+</h:head>
+<h:body>
+	<ui:include src="header.xhtml" />	
+	<ui:include src="menu.xhtml" />
+	
+	<div id="layout-portlets-cover" class="fontRegular" >			
+		<h:form id="form_data_lancamento" >				
+			
+			<p:growl id="messages_lancamento" autoUpdate="false" showDetail="true" />
+			
+			<div id="menu" class="clean-menu" >		
+				<h:panelGroup rendered="#{lancamentoBean.selectedLancamento == null}" >			
+					<p:commandButton value="Novo" id="btn_novo" process="@this" actionListener="#{lancamentoBean.novo}" update="form_data_lancamento" styleClass="btn_menu" ><p:resetInput target="form_data_lancamento" /></p:commandButton>									
+				</h:panelGroup>
+				
+				<h:panelGroup rendered="#{lancamentoBean.selectedLancamento != null}" >
+					<p:commandButton value="Salvar" id="btn_salvar" type="submit" actionListener="#{lancamentoBean.salvar}" update="form_data_lancamento" styleClass="btn_menu" />
+					<p:commandButton value="Excluir" id="btn_excluir" disabled="#{lancamentoBean.selectedLancamento.oid == null}" actionListener="#{lancamentoBean.excluir}" update="form_data_lancamento" styleClass="btn_menu" />										
+				</h:panelGroup>											
+			</div>
+			
+			<p:panel rendered="#{lancamentoBean.selectedLancamento != null}" styleClass="altura" >	
+				<div class="row" >
+			    	<div class="two columns">		    		        	 
+			    		<p:outputLabel value="OID" />
+			    		<p:inputText id="oid" disabled="true" value="#{lancamentoBean.selectedLancamento.oid}" styleClass="u-full-width" />
+			    	</div>
+			    	
+			    	<div class="two columns">	
+			    		<p:outputLabel value="Data Inicial" />
+			    		<p:calendar id="data_inicial" value="#{lancamentoBean.selectedLancamento.dataInicial}" autocomplete="off" required="true" locale="pt" maxlength="10" requiredMessage="Data inicial não informada" pattern="dd/MM/yyyy" styleClass="u-full-width" />
+			    	</div>
+			    	
+			    	<div class="two columns">
+			    		<p:outputLabel value="Data Final" />		        						    	
+	        			<p:calendar id="data_final" value="#{lancamentoBean.selectedLancamento.dataFinal}" autocomplete="off" required="true" locale="pt" maxlength="10" requiredMessage="Data final não informada" pattern="EEE dd/MM/yy" styleClass="u-full-width" />
+	        		</div>
+			    </div>						    
+			    				
+				<div class="row" >		        		
+	        		<p:outputLabel value="Observação" />
+	        		<p:inputTextarea id="obs" value="#{lancamentoBean.selectedLancamento.observacao}" maxlength="1000" rows="4" styleClass="u-full-width" />     
+     			</div>
+     
+     			<div class="row" >
+		            <p:dataTable id="table_itens" widgetVar="table_itens" 
+		            	var="lancitem" 
+		        		value="#{lancamentoBean.selectedLancamento.lancamentoItems}"
+						rowKey="#{lancitem.oid}" 
+						emptyMessage="Nenhum item vinculado"		
+						liveScroll="false" 
+						scrollable="true"
+						scrollHeight="100%" 
+						style="height: calc(100vh - 360px);"  >
+						
+						<f:facet name="header">Items</f:facet>	
+						<p:column headerText="OID" width="10%" sortBy="#{lancitem.item.oid}" ><h:outputText value="#{lancitem.item.oid}" /></p:column>
+		            	<p:column headerText="Descrição" width="75%" sortBy="#{lancitem.item.descricao}" ><h:outputText value="#{lancitem.item.descricao}" /></p:column>
+		            	<p:column headerText="Valor" width="15%" style="text-align: right" styleClass="center" sortBy="#{lancitem.item.valor}" ><h:outputText value="#{lancitem.item.valor}" ><f:convertNumber minFractionDigits="2" maxIntegerDigits="8" locale="pt_BR" /></h:outputText></p:column>
+					    																					
+				        <p:column style="width: 10px;" styleClass="center" >  									            				            		   		            				                   
+				            <p:commandButton style="height: 18px; width: 18px; font-size: 10px;" icon="ui-icon-trash" immediate="true" onclick="PF('confirmation_exc_lancamento_item').show()" title="Excluir" >  			               
+				               <f:setPropertyActionListener value="#{lancitem}" target="#{lancamentoBean.selectedLancamentoItem}" />	                  
+				            </p:commandButton>			            				            	        
+				        </p:column>
+		            </p:dataTable>
+	            </div>
+           
+           		<div class="row" >
+	            	<div class="two columns">
+	           			<p:outputLabel value="OID Item Adicionar" />
+						<p:inputNumber id="item_add" value="#{lancamentoBean.numeroItemAdd}" decimalPlaces="0" styleClass="u-full-width" />
+					
+	           			<p:commandButton value="Adicionar" id="btn_add" actionListener="#{lancamentoBean.addItem}" update="form_data_lancamento:table_itens form_data_lancamento:total item_add" styleClass="u-full-width" />
+	           		</div>
+	        	
+		        	<div class="eight columns">
+			    		<h:outputLabel value="" />
+			    	</div>
+	        	
+	        	
+	            	<div class="two columns">		
+		        		<p:outputLabel value="Valor Total" />
+		        		<h2>
+				        	<h:outputText id="total" value="#{lancamentoBean.selectedLancamento.valorTotal}" >
+				        		<f:convertNumber  minFractionDigits="2" maxIntegerDigits="12" locale="pt_BR" />
+				        	</h:outputText>
+				        </h2>					        	      	
+		        	</div>
+		        </div>		       
+	        </p:panel>	
+		</h:form>
+		
+		<h:form id="form_table_lancamento" >
+			<p:dataTable var="lancamento" 
+					emptyMessage="Nenhum lancamento encontrado..."
+					scrollable="true"
+			 		value="#{lancamentoBean.lancamentos}"
+					rowKey="#{lancamento.oid}" 
+					selection="#{lancamentoBean.selectedLancamento}"
+					selectionMode="single" 
+			 		rendered="#{lancamentoBean.selectedLancamento == null}"
+			 		scrollHeight="100%" 
+					styleClass="altura" >
+			 	
+				<p:ajax event="rowSelect" listener="#{lancamentoBean.onRowSelect}" />
+			 		
+			    <p:column headerText="OID" width="10%" sortBy="#{lancamento.oid}" ><h:outputText value="#{lancamento.oid}" /></p:column>	
+			    <p:column headerText="Descrição" width="75%" sortBy="#{lancamento.observacao}" ><h:outputText value="#{lancamento.observacao}" /></p:column>
+			    <p:column headerText="Valor" width="15%" sortBy="#{lancamento.valorTotal}" ><h:outputText value="#{lancamento.valorTotal}" ><f:convertNumber minFractionDigits="2" maxIntegerDigits="12" locale="pt_BR" /></h:outputText></p:column>			 				    
+			</p:dataTable>
+		</h:form>
+		
+		<h:form id="dlg_exc_lancamento_item">
+			<p:confirmDialog message="Deseja realmente excluir este item do lançamento?" hideEffect="explode" header="Aviso" severity="alert" widgetVar="confirmation_exc_lancamento_item" modal="true" >							
+				<p:commandButton value="Sim" oncomplete="PF('confirmation_exc_lancamento_item').hide();" actionListener="#{lancamentoBean.excluirItem}" update=":form_data_lancamento :form_table_lancamento" />						
+				<p:commandButton value="Não" onclick="PF('confirmation_exc_lancamento_item').hide();" />							
+			</p:confirmDialog>
+		</h:form>
+	</div>
+
+</h:body>
+</html>

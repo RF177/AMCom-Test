@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+	
+<h:head>
+	<link rel="stylesheet" href="css/raphael.css" />
+	<link rel="stylesheet" href="css/sentinel-layout.css" />
+	<link rel="stylesheet" href="css/core-layout.css" />
+	<link rel="stylesheet" href="css/skeleton-form.css" />	
+	
+	<script type="text/javascript" src="js/locales.js" ></script>
+</h:head>
+<h:body>
+	<div id="layout-menubar" class="Unselectable fontRegular" style="height: calc(100vh - 55px);" >		
+		<h:form>	
+			<br/><br/>		
+			<p:button id="dynaButton_item" value="Item" type="button" href="item.jsf" styleClass="btn_menubar" />	
+			<p:button id="dynaButton_lancamento" value="Lançamento" type="button" href="lancamento.jsf" styleClass="btn_menubar" />
+			<p:button id="dynaButton_intersecao" value="Interseção" type="button" href="intersecao.jsf" styleClass="btn_menubar" />	
+		</h:form>
+	</div>	
+	 	
+</h:body>
+</html>
